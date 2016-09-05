@@ -2,6 +2,7 @@ let http = require('http')
 let request = require('request')
 let path = require('path')
 let fs = require('fs')
+let chalk = require('chalk')
 let argv = require('yargs')
     .default('host', '127.0.0.1')
     .usage('Usage: node $0 [options]')
@@ -20,7 +21,7 @@ let logLevel = argv.logLevel || 2
 
 http.createServer((req, res) => {
 	destinationUrl = req.headers['x-destination-url'] || destinationUrl
-	console.log(`\n\n\nProxying request to: ${destinationUrl + req.url}`)
+	console.log(chalk.yellow(`\n\n\nProxying request to: `) + chalk.green(`${destinationUrl + req.url}`))
 	let options = {
 	    headers: req.headers,
 	    url: `${destinationUrl}${req.url}`
@@ -31,7 +32,7 @@ http.createServer((req, res) => {
 	let logStream = logPath ? fs.createWriteStream(logPath, {flags: 'a'}) : process.stdout
 
 	let downstreamResponse = req.pipe(request(options))
-	logStream.write('\nRequest headers: ' + JSON.stringify(downstreamResponse.headers) + '\n')
+	logStream.write(chalk.yellow('\nRequest headers: ') + chalk.green(JSON.stringify(downstreamResponse.headers) + '\n'))
 	downstreamResponse.pipe(logStream, {end: false})
 	downstreamResponse.pipe(res)
 
