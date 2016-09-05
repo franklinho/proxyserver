@@ -1,0 +1,20 @@
+{
+  "name": "proxyserver",
+  "version": "1.0.0",
+  "description": "Proxy Server for Codepath",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "proxy",
+    "server"
+  ],
+  "author": "Franklin Ho",
+  "license": "ISC",
+  "dependencies": {
+    "request": "^2.74.0",
+    "yargs": "^3.32.0"
+  }
+}
