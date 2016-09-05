@@ -4,10 +4,19 @@ let path = require('path')
 let fs = require('fs')
 let argv = require('yargs')
     .default('host', '127.0.0.1')
+    .usage('Usage: node $0 [options]')
+    .describe('host', 'Proxy host')
+    .describe('port', 'Proxy port')
+    .describe('url', 'Destination url (including port')
+    .describe('log', 'Path to log file')
+    .alias('h', 'help')
+    .help('h')
+    .epilog('Big thanks to Walmart Labs and Codepath for this course!\ncopyright 2016')
     .argv
 let scheme = 'http://'
 let port = argv.port || (argv.host === '127.0.0.1' ? 8000 : 80)
 let destinationUrl = argv.url || scheme + argv.host + ':' + port
+let logLevel = argv.logLevel || 2
 
 http.createServer((req, res) => {
 	destinationUrl = req.headers['x-destination-url'] || destinationUrl
@@ -19,10 +28,10 @@ http.createServer((req, res) => {
 	options.method = req.method
 
 	let logPath = argv.log && path.join(__dirname, argv.log)
-	let logStream = logPath ? fs.createWriteStream(logPath) : process.stdout
+	let logStream = logPath ? fs.createWriteStream(logPath, {flags: 'a'}) : process.stdout
 
 	let downstreamResponse = req.pipe(request(options))
-	logStream.write('Request headers: ' + JSON.stringify(downstreamResponse.headers) + '\n')
+	logStream.write('\nRequest headers: ' + JSON.stringify(downstreamResponse.headers) + '\n')
 	downstreamResponse.pipe(logStream, {end: false})
 	downstreamResponse.pipe(res)
 
